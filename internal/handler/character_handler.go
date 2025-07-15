@@ -4,11 +4,12 @@ import (
 	"net/http"
 
 	"dballz/internal/dto"
+	"dballz/internal/service"
 
 	"github.com/gin-gonic/gin"
 )
 
-func RegisterCharacterHandler(r *gin.Engine) {
+func RegisterCharacterHandler(r *gin.Engine, characterService *service.CharacterService) {
 	r.POST("/dragon-ball/character", func(c *gin.Context) {
 		var req dto.CreateCharacterRequest
 		if err := c.ShouldBindJSON(&req); err != nil {
@@ -18,8 +19,12 @@ func RegisterCharacterHandler(r *gin.Engine) {
 			})
 			return
 		}
-		c.JSON(http.StatusOK, gin.H{
-			"Id": "placeholder response",
-		})
+
+		character, err := characterService.GenerateCharacter(req)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+		c.JSON(http.StatusOK, character)
 	})
 }

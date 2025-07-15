@@ -14,11 +14,10 @@ type Server struct {
 	cfg    *config.Config
 }
 
-func NewServer(cfg *config.Config, userService *service.UserService) *Server {
+func NewServer(cfg *config.Config, characterService *service.CharacterService) *Server {
 	r := gin.Default()
 	handler.RegisterHealthRoutes(r)
-	handler.RegisterUserRoutes(r, userService)
-	handler.RegisterCharacterHandler(r)
+	handler.RegisterCharacterHandler(r, characterService)
 
 	return &Server{
 		engine: r,

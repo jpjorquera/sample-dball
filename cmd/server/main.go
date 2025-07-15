@@ -17,10 +17,10 @@ func main() {
 		log.Fatalf("failed to init db: %v", err)
 	}
 
-	userRepo := repository.NewUserRepository(dbConn)
-	userService := service.NewUserService(userRepo)
+	characterRepository := repository.NewCharacterRepository(dbConn)
+	characterService := service.NewCharacterService(characterRepository)
 
-	srv := server.NewServer(cfg, userService)
+	srv := server.NewServer(cfg, characterService)
 	if err := srv.Run(); err != nil {
 		log.Fatalf("server error: %v", err)
 	}
