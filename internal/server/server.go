@@ -18,6 +18,7 @@ func NewServer(cfg *config.Config, userService *service.UserService) *Server {
 	r := gin.Default()
 	handler.RegisterHealthRoutes(r)
 	handler.RegisterUserRoutes(r, userService)
+	handler.RegisterDragonBallHandler(r)
 
 	return &Server{
 		engine: r,
