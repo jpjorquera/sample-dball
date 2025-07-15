@@ -6,11 +6,15 @@ import (
 )
 
 type CharacterService struct {
-	repo *repository.CharacterRepository
+	externalGetter repository.CharacterGetter
+	store          repository.CharacterStore
 }
 
-func NewCharacterService(repo *repository.CharacterRepository) *CharacterService {
-	return &CharacterService{repo: repo}
+func NewCharacterService(extGetter repository.CharacterGetter, store repository.CharacterStore) *CharacterService {
+	return &CharacterService{
+		externalGetter: extGetter,
+		store:          store,
+	}
 }
 
 func (s *CharacterService) GenerateCharacter(dto.CreateCharacterRequest) (int, error) {

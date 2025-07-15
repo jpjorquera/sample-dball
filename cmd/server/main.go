@@ -17,8 +17,9 @@ func main() {
 		log.Fatalf("failed to init db: %v", err)
 	}
 
-	characterRepository := repository.NewCharacterRepository(dbConn)
-	characterService := service.NewCharacterService(characterRepository)
+	charaterExternalRepository := repository.NewCharacterExternalRepository("")
+	characterDBRepository := repository.NewCharacterDBRepository(dbConn)
+	characterService := service.NewCharacterService(charaterExternalRepository, characterDBRepository)
 
 	srv := server.NewServer(cfg, characterService)
 	if err := srv.Run(); err != nil {

@@ -1,17 +1,16 @@
 package repository
 
-import (
-	"dballz/internal/db"
-)
+import "dballz/internal/dto"
 
-type CharacterRepository struct {
-	db db.DB
+type CharacterGetter interface {
+	GetByName(name string) (*dto.CharacterInformation, error)
 }
 
-func NewCharacterRepository(database db.DB) *CharacterRepository {
-	return &CharacterRepository{db: database}
+type CharacterSaver interface {
+	Save(character *dto.CharacterInformation) (*dto.CharacterInformation, error)
 }
 
-func (r *CharacterRepository) CreateCharacter() (int, error) {
-	return 0, nil
+type CharacterStore interface {
+	CharacterGetter
+	CharacterSaver
 }
