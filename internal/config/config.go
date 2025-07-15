@@ -3,12 +3,14 @@ package config
 import "os"
 
 type Config struct {
-	Port string
+	Port           string
+	ExternalAPIURL string
 }
 
 func LoadConfig() *Config {
 	return &Config{
-		Port: getEnv("PORT", "8080"),
+		Port:           getEnv("PORT", "8080"),
+		ExternalAPIURL: "https://dragonball-api.com/api",
 	}
 }
 

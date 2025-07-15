@@ -20,7 +20,7 @@ func RegisterCharacterHandler(r *gin.Engine, characterService *service.Character
 			return
 		}
 
-		character, err := characterService.GenerateCharacter(req)
+		character, err := characterService.GenerateCharacter(req.Name)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return

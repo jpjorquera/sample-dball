@@ -17,7 +17,7 @@ func main() {
 		log.Fatalf("failed to init db: %v", err)
 	}
 
-	charaterExternalRepository := repository.NewCharacterExternalRepository("")
+	charaterExternalRepository := repository.NewCharacterExternalRepository(cfg.ExternalAPIURL)
 	characterDBRepository := repository.NewCharacterDBRepository(dbConn)
 	characterService := service.NewCharacterService(charaterExternalRepository, characterDBRepository)
 

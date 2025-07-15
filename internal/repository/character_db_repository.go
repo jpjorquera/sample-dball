@@ -13,10 +13,10 @@ func NewCharacterDBRepository(database db.DB) *CharacterDBRepository {
 	return &CharacterDBRepository{db: database}
 }
 
-func (r *CharacterDBRepository) GetByName(name string) (*dto.CharacterInformation, error) {
-	return nil, nil
+func (r *CharacterDBRepository) GetByName(name string) (dto.CharacterInformation, error) {
+	return dto.CharacterInformation{}, nil
 }
 
-func (r *CharacterDBRepository) Save(character *dto.CharacterInformation) (*dto.CharacterInformation, error) {
-	return nil, nil
+func (r *CharacterDBRepository) Save(character dto.CharacterInformation) error {
+	return nil
 }

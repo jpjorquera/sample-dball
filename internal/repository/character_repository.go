@@ -3,11 +3,11 @@ package repository
 import "dballz/internal/dto"
 
 type CharacterGetter interface {
-	GetByName(name string) (*dto.CharacterInformation, error)
+	GetByName(name string) (dto.CharacterInformation, error)
 }
 
 type CharacterSaver interface {
-	Save(character *dto.CharacterInformation) (*dto.CharacterInformation, error)
+	Save(character dto.CharacterInformation) error
 }
 
 type CharacterStore interface {
