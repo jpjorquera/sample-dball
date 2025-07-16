@@ -1,7 +1,7 @@
 package service
 
 import (
-	"dballz/internal/dto"
+	"dballz/internal/model"
 	"dballz/internal/repository"
 	"errors"
 )
@@ -18,7 +18,7 @@ func NewCharacterService(extGetter repository.CharacterGetter, store repository.
 	}
 }
 
-func (s *CharacterService) GenerateCharacter(name string) (*dto.CharacterInformation, error) {
+func (s *CharacterService) GenerateCharacter(name string) (*model.Character, error) {
 	characterInformation, err := s.store.GetByName(name)
 	if err != nil && !errors.Is(err, repository.ErrNotFound) {
 		return nil, ErrDatabase
@@ -30,7 +30,10 @@ func (s *CharacterService) GenerateCharacter(name string) (*dto.CharacterInforma
 
 	characterInformation, err = s.externalGetter.GetByName(name)
 	if err != nil {
-		return nil, err
+		if errors.Is(err, repository.ErrNotFound) {
+			return nil, ErrNotFound
+		}
+		return nil, ErrExternalAPI
 	}
 
 	err = s.store.Save(characterInformation)

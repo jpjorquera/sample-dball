@@ -1,13 +1,15 @@
 package repository
 
-import "dballz/internal/dto"
+import (
+	"dballz/internal/model"
+)
 
 type CharacterGetter interface {
-	GetByName(name string) (*dto.CharacterInformation, error)
+	GetByName(name string) (*model.Character, error)
 }
 
 type CharacterSaver interface {
-	Save(character *dto.CharacterInformation) error
+	Save(character *model.Character) error
 }
 
 type CharacterStore interface {

@@ -16,8 +16,8 @@ func (e APIError) Respond(c *gin.Context) {
 }
 
 var (
-	ErrBadRequest = APIError{Message: "Invalid request", Code: http.StatusBadRequest}
-	ErrNotFound   = APIError{Message: "Resource not found", Code: http.StatusNotFound}
-	ErrServer     = APIError{Message: "Internal server error", Code: http.StatusInternalServerError}
+	ErrBadRequest = APIError{Message: "invalid request", Code: http.StatusBadRequest}
+	ErrNotFound   = APIError{Message: "resource not found", Code: http.StatusNotFound}
+	ErrServer     = APIError{Message: "internal server error", Code: http.StatusInternalServerError}
 	ErrUpstream   = APIError{Message: "upstream service unavailable", Code: http.StatusBadGateway}
 )

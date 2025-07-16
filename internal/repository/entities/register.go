@@ -1,7 +1,7 @@
-package model
+package entities
 
 func AllModels() []interface{} {
 	return []interface{}{
-		&Character{},
+		&CharacterEntity{},
 	}
 }

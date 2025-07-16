@@ -2,8 +2,8 @@ package main
 
 import (
 	"dballz/internal/config"
-	"dballz/internal/model"
 	"dballz/internal/repository"
+	"dballz/internal/repository/entities"
 	"dballz/internal/server"
 	"dballz/internal/service"
 	"log"
@@ -20,7 +20,7 @@ func main() {
 		log.Fatal("failed to connect database:", err)
 	}
 
-	if err := dbConn.AutoMigrate(model.AllModels()...); err != nil {
+	if err := dbConn.AutoMigrate(entities.AllModels()...); err != nil {
 		log.Fatal("failed to migrate database:", err)
 	}
 

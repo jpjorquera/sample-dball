@@ -3,9 +3,9 @@ package repository_test
 import (
 	"testing"
 
-	"dballz/internal/dto"
 	"dballz/internal/model"
 	"dballz/internal/repository"
+	"dballz/internal/repository/entities"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -16,7 +16,7 @@ import (
 func setupTestDB(t *testing.T) *gorm.DB {
 	db, err := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
 	require.NoError(t, err)
-	require.NoError(t, db.AutoMigrate(&model.Character{}))
+	require.NoError(t, db.AutoMigrate(entities.AllModels()...))
 	return db
 }
 
@@ -24,7 +24,7 @@ func TestSaveAndGetCharacter(t *testing.T) {
 	db := setupTestDB(t)
 	repo := repository.NewCharacterDBRepository(db)
 
-	character := &dto.CharacterInformation{
+	character := &model.Character{
 		ExternalID: 1,
 		Name:       "Goku",
 		Race:       "Saiyan",
@@ -44,7 +44,7 @@ func TestSaveAndGetCharacterByName(t *testing.T) {
 	db := setupTestDB(t)
 	repo := repository.NewCharacterDBRepository(db)
 
-	character := &dto.CharacterInformation{
+	character := &model.Character{
 		ExternalID: 1,
 		Name:       "Goku",
 		Race:       "Saiyan",

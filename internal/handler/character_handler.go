@@ -4,7 +4,7 @@ import (
 	"errors"
 	"net/http"
 
-	"dballz/internal/dto"
+	"dballz/internal/model"
 	"dballz/internal/service"
 
 	"github.com/gin-gonic/gin"
@@ -12,7 +12,7 @@ import (
 
 func RegisterCharacterHandler(r *gin.Engine, characterService *service.CharacterService) {
 	r.POST("/dragon-ball/character", func(c *gin.Context) {
-		var req dto.CreateCharacterRequest
+		var req model.CreateCharacterRequest
 		if err := c.ShouldBindJSON(&req); err != nil {
 			c.JSON(http.StatusBadRequest, ErrBadRequest)
 			return

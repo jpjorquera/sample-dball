@@ -4,9 +4,7 @@ services:
     container_name: dballz-api
     ports:
       - "8080:8080"
-    volumes:
-      - ./data:/app/data
     environment:
-      - EXTERNAL_API_URL="https://dragonball-api.com/api"
+      - EXTERNAL_API_URL=https://dragonball-api.com/api
       - GIN_MODE=release
     restart: always

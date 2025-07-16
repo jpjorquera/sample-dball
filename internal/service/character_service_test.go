@@ -4,7 +4,7 @@ import (
 	"errors"
 	"testing"
 
-	"dballz/internal/dto"
+	"dballz/internal/model"
 	"dballz/internal/repository"
 
 	"github.com/stretchr/testify/assert"
@@ -14,23 +14,23 @@ import (
 
 type mockStore struct{ mock.Mock }
 
-func (m *mockStore) GetByName(name string) (*dto.CharacterInformation, error) {
+func (m *mockStore) GetByName(name string) (*model.Character, error) {
 	args := m.Called(name)
-	if info, ok := args.Get(0).(*dto.CharacterInformation); ok {
+	if info, ok := args.Get(0).(*model.Character); ok {
 		return info, args.Error(1)
 	}
 	return nil, args.Error(1)
 }
-func (m *mockStore) Save(info *dto.CharacterInformation) error {
+func (m *mockStore) Save(info *model.Character) error {
 	args := m.Called(info)
 	return args.Error(0)
 }
 
 type mockExternalGetter struct{ mock.Mock }
 
-func (m *mockExternalGetter) GetByName(name string) (*dto.CharacterInformation, error) {
+func (m *mockExternalGetter) GetByName(name string) (*model.Character, error) {
 	args := m.Called(name)
-	if info, ok := args.Get(0).(*dto.CharacterInformation); ok {
+	if info, ok := args.Get(0).(*model.Character); ok {
 		return info, args.Error(1)
 	}
 	return nil, args.Error(1)
@@ -39,13 +39,13 @@ func (m *mockExternalGetter) GetByName(name string) (*dto.CharacterInformation, 
 func TestReturnCharacterFromStore(t *testing.T) {
 	store := new(mockStore)
 	externalApi := new(mockExternalGetter)
-	expectedCharacter := &dto.CharacterInformation{ID: 1, ExternalID: 1, Name: "Goku", Race: "Saiyan", Description: "Sample description"}
+	expectedCharacter := &model.Character{ID: 1, ExternalID: 1, Name: "Goku", Race: "Saiyan", Description: "Sample description"}
 	requestedCharacterName := "Goku"
 
 	store.On("GetByName", requestedCharacterName).Return(expectedCharacter, nil)
-	service := NewCharacterService(externalApi, store)
+	characterService := NewCharacterService(externalApi, store)
 
-	gottenCharacter, err := service.GenerateCharacter(requestedCharacterName)
+	gottenCharacter, err := characterService.GenerateCharacter(requestedCharacterName)
 
 	require.NoError(t, err)
 	assert.Equal(t, expectedCharacter, gottenCharacter)
@@ -56,15 +56,15 @@ func TestReturnCharacterFromStore(t *testing.T) {
 func TestGetExternalCharacterAndSaves(t *testing.T) {
 	store := new(mockStore)
 	externalApi := new(mockExternalGetter)
-	expectedCharacter := &dto.CharacterInformation{ExternalID: 1, Name: "Goku", Race: "Saiyan", Description: "Sample description"}
+	expectedCharacter := &model.Character{ExternalID: 1, Name: "Goku", Race: "Saiyan", Description: "Sample description"}
 	requestedCharacterName := "Gohan"
 
 	store.On("GetByName", requestedCharacterName).Return(nil, repository.ErrNotFound)
 	externalApi.On("GetByName", requestedCharacterName).Return(expectedCharacter, nil)
 	store.On("Save", expectedCharacter).Return(nil)
-	service := NewCharacterService(externalApi, store)
+	characterService := NewCharacterService(externalApi, store)
 
-	gottenCharacter, err := service.GenerateCharacter(requestedCharacterName)
+	gottenCharacter, err := characterService.GenerateCharacter(requestedCharacterName)
 
 	require.NoError(t, err)
 	assert.Equal(t, expectedCharacter, gottenCharacter)
@@ -78,9 +78,9 @@ func TestReturnsDatabaseErrorWhenStoreGetFails(t *testing.T) {
 	requestedCharacterName := "Goku"
 
 	store.On("GetByName", requestedCharacterName).Return(nil, errors.New("mock error"))
-	service := NewCharacterService(externalApi, store)
+	characterService := NewCharacterService(externalApi, store)
 
-	gottenCharacter, err := service.GenerateCharacter(requestedCharacterName)
+	gottenCharacter, err := characterService.GenerateCharacter(requestedCharacterName)
 
 	assert.Nil(t, gottenCharacter)
 	assert.Equal(t, ErrDatabase, err)
@@ -92,17 +92,15 @@ func TestReturnsErrorWhenExternalAPIFails(t *testing.T) {
 	store := new(mockStore)
 	externalApi := new(mockExternalGetter)
 	requestedCharacterName := "Goku"
-	mockExternalError := errors.New("mock external error")
 
 	store.On("GetByName", requestedCharacterName).Return(nil, repository.ErrNotFound)
-	externalApi.On("GetByName", requestedCharacterName).Return(nil, mockExternalError)
+	externalApi.On("GetByName", requestedCharacterName).Return(nil, ErrExternalAPI)
+	characterService := NewCharacterService(externalApi, store)
 
-	service := NewCharacterService(externalApi, store)
-
-	gottenCharacter, err := service.GenerateCharacter(requestedCharacterName)
+	gottenCharacter, err := characterService.GenerateCharacter(requestedCharacterName)
 
 	assert.Nil(t, gottenCharacter)
-	assert.Equal(t, mockExternalError, err)
+	assert.Equal(t, ErrExternalAPI, err)
 	store.AssertExpectations(t)
 	externalApi.AssertExpectations(t)
 }
@@ -110,15 +108,15 @@ func TestReturnsErrorWhenExternalAPIFails(t *testing.T) {
 func TestReturnsDatabaseErrorWhenStoreSaveFails(t *testing.T) {
 	store := new(mockStore)
 	externalApi := new(mockExternalGetter)
-	expectedCharacter := &dto.CharacterInformation{ExternalID: 1, Name: "Goku", Race: "Saiyan", Description: "Sample description"}
+	expectedCharacter := &model.Character{ExternalID: 1, Name: "Goku", Race: "Saiyan", Description: "Sample description"}
 	requestedCharacterName := "Goku"
 
 	store.On("GetByName", requestedCharacterName).Return(nil, repository.ErrNotFound)
 	externalApi.On("GetByName", requestedCharacterName).Return(expectedCharacter, nil)
 	store.On("Save", expectedCharacter).Return(errors.New("mock database failure"))
-	service := NewCharacterService(externalApi, store)
+	characterService := NewCharacterService(externalApi, store)
 
-	gottenCharacter, err := service.GenerateCharacter(requestedCharacterName)
+	gottenCharacter, err := characterService.GenerateCharacter(requestedCharacterName)
 
 	assert.Nil(t, gottenCharacter)
 	assert.Equal(t, ErrDatabase, err)

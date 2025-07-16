@@ -16,6 +16,8 @@ type Server struct {
 
 func NewServer(cfg *config.Config, characterService *service.CharacterService) *Server {
 	r := gin.Default()
+	r.SetTrustedProxies([]string{"127.0.0.1", "::1"})
+
 	handler.RegisterHealthRoutes(r)
 	handler.RegisterCharacterHandler(r, characterService)
 
