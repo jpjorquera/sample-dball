@@ -1,0 +1,16 @@
+.git
+.gitignore
+
+.vscode
+.idea
+
+bin/
+tmp/
+dist/
+
+.DS_Store
+
+data/*.db
+README.md
+*.log
+.air.toml

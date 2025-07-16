@@ -10,7 +10,7 @@ type Config struct {
 func LoadConfig() *Config {
 	return &Config{
 		Port:           getEnv("PORT", "8080"),
-		ExternalAPIURL: "https://dragonball-api.com/api",
+		ExternalAPIURL: getEnv("EXTERNAL_API_URL", "https://dragonball-api.com/api"),
 	}
 }
 
