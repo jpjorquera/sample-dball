@@ -1,15 +1,16 @@
 package repository
 
 import (
-	"dballz/internal/db"
 	"dballz/internal/dto"
+
+	"gorm.io/gorm"
 )
 
 type CharacterDBRepository struct {
-	db db.DB
+	db *gorm.DB
 }
 
-func NewCharacterDBRepository(database db.DB) *CharacterDBRepository {
+func NewCharacterDBRepository(database *gorm.DB) *CharacterDBRepository {
 	return &CharacterDBRepository{db: database}
 }
 

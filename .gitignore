@@ -34,3 +34,5 @@ coverage.out
 /docs/swagger.yaml
 
 config/local.yaml
+
+data/*.db

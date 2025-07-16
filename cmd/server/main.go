@@ -2,19 +2,26 @@ package main
 
 import (
 	"dballz/internal/config"
-	"dballz/internal/db/sqlite"
+	"dballz/internal/model"
 	"dballz/internal/repository"
 	"dballz/internal/server"
 	"dballz/internal/service"
 	"log"
+
+	"gorm.io/driver/sqlite"
+	"gorm.io/gorm"
 )
 
 func main() {
 	cfg := config.LoadConfig()
 
-	dbConn, err := sqlite.New("dballz.sqlite")
+	dbConn, err := gorm.Open(sqlite.Open("data/dball.db"), &gorm.Config{})
 	if err != nil {
-		log.Fatalf("failed to init db: %v", err)
+		log.Fatal("failed to connect database:", err)
+	}
+
+	if err := dbConn.AutoMigrate(model.AllModels()...); err != nil {
+		log.Fatal("failed to migrate database:", err)
 	}
 
 	charaterExternalRepository := repository.NewCharacterExternalRepository(cfg.ExternalAPIURL)
