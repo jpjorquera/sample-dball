@@ -17,10 +17,19 @@ func NewCharacterService(extGetter repository.CharacterGetter, store repository.
 	}
 }
 
-func (s *CharacterService) GenerateCharacter(name string) (dto.CharacterInformation, error) {
-	characterInformation, err := s.externalGetter.GetByName(name)
+func (s *CharacterService) GenerateCharacter(name string) (*dto.CharacterInformation, error) {
+	characterInformation, err := s.store.GetByName(name)
 	if err != nil {
-		return dto.CharacterInformation{}, err
+		return nil, err
+	}
+
+	if characterInformation != nil {
+		return characterInformation, nil
+	}
+
+	characterInformation, err = s.externalGetter.GetByName(name)
+	if err != nil {
+		return nil, err
 	}
 	return characterInformation, nil
 }
