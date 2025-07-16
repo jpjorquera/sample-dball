@@ -35,5 +35,8 @@ func (r *CharacterExternalAPIRepository) GetByName(name string) (*dto.CharacterI
 		return nil, fmt.Errorf("error decoding response: %w", err)
 	}
 
+	if len(characters) == 0 {
+		return nil, ErrNotFound
+	}
 	return &characters[0], nil
 }
