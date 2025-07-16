@@ -2,6 +2,7 @@ package repository
 
 import (
 	"dballz/internal/model"
+	"dballz/internal/repository/entities"
 	"errors"
 
 	"gorm.io/gorm"
@@ -16,8 +17,8 @@ func NewCharacterDBRepository(database *gorm.DB) *CharacterDBRepository {
 }
 
 func (r *CharacterDBRepository) GetByName(name string) (*model.Character, error) {
-	var characterModel model.Character
-	err := r.db.Where("name LIKE ?", "%"+name+"%").First(&characterModel).Error
+	var characterEntity entities.CharacterEntity
+	err := r.db.Where("name LIKE ?", "%"+name+"%").First(&characterEntity).Error
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		return nil, ErrNotFound
 	}
@@ -26,30 +27,30 @@ func (r *CharacterDBRepository) GetByName(name string) (*model.Character, error)
 	}
 
 	characterDTO := &model.Character{
-		ID:          characterModel.ID,
-		ExternalID:  characterModel.ExternalID,
-		Name:        characterModel.Name,
-		Race:        characterModel.Race,
-		Ki:          characterModel.Ki,
-		Description: characterModel.Description,
+		ID:          characterEntity.ID,
+		ExternalID:  characterEntity.ExternalID,
+		Name:        characterEntity.Name,
+		Race:        characterEntity.Race,
+		Ki:          characterEntity.Ki,
+		Description: characterEntity.Description,
 	}
 	return characterDTO, nil
 }
 
-func (r *CharacterDBRepository) Save(character *model.Character) error {
-	characterModel := model.Character{
-		ExternalID:  character.ExternalID,
-		Name:        character.Name,
-		Race:        character.Race,
-		Ki:          character.Ki,
-		Description: character.Description,
+func (r *CharacterDBRepository) Save(characterDTO *model.Character) error {
+	characterEntity := entities.CharacterEntity{
+		ExternalID:  characterDTO.ExternalID,
+		Name:        characterDTO.Name,
+		Race:        characterDTO.Race,
+		Ki:          characterDTO.Ki,
+		Description: characterDTO.Description,
 	}
 
-	err := r.db.Save(&characterModel).Error
+	err := r.db.Save(&characterEntity).Error
 	if err != nil {
 		return err
 	}
 
-	character.ID = characterModel.ID
+	characterDTO.ID = characterEntity.ID
 	return nil
 }
