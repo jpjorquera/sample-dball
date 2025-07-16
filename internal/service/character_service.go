@@ -21,7 +21,7 @@ func NewCharacterService(extGetter repository.CharacterGetter, store repository.
 func (s *CharacterService) GenerateCharacter(name string) (*dto.CharacterInformation, error) {
 	characterInformation, err := s.store.GetByName(name)
 	if err != nil && !errors.Is(err, repository.ErrNotFound) {
-		return nil, err
+		return nil, ErrDatabase
 	}
 
 	if characterInformation != nil {
@@ -35,7 +35,7 @@ func (s *CharacterService) GenerateCharacter(name string) (*dto.CharacterInforma
 
 	err = s.store.Save(characterInformation)
 	if err != nil {
-		return nil, err
+		return nil, ErrDatabase
 	}
 
 	return characterInformation, nil

@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"errors"
 	"net/http"
 
 	"dballz/internal/dto"
@@ -13,16 +14,20 @@ func RegisterCharacterHandler(r *gin.Engine, characterService *service.Character
 	r.POST("/dragon-ball/character", func(c *gin.Context) {
 		var req dto.CreateCharacterRequest
 		if err := c.ShouldBindJSON(&req); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"message": "Invalid request",
-				"details": "Invalid value for field name",
-			})
+			c.JSON(http.StatusBadRequest, ErrBadRequest)
 			return
 		}
 
 		character, err := characterService.GenerateCharacter(req.Name)
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			switch {
+			case errors.Is(err, service.ErrNotFound):
+				ErrNotFound.Respond(c)
+			case errors.Is(err, service.ErrExternalAPI):
+				ErrUpstream.Respond(c)
+			default:
+				ErrServer.Respond(c)
+			}
 			return
 		}
 		c.JSON(http.StatusOK, character)
