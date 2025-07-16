@@ -5,7 +5,8 @@ type CreateCharacterRequest struct {
 }
 
 type CharacterInformation struct {
-	ID          int    `json:"id"`
+	ID          uint   `json:"-"`
+	ExternalID  uint   `json:"id"`
 	Name        string `json:"name"`
 	Race        string `json:"race"`
 	Ki          string `json:"ki"`

@@ -7,7 +7,7 @@ type CharacterGetter interface {
 }
 
 type CharacterSaver interface {
-	Save(character dto.CharacterInformation) error
+	Save(character *dto.CharacterInformation) error
 }
 
 type CharacterStore interface {

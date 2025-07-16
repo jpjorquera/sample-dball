@@ -2,6 +2,8 @@ package repository
 
 import (
 	"dballz/internal/dto"
+	"dballz/internal/model"
+	"errors"
 
 	"gorm.io/gorm"
 )
@@ -15,9 +17,40 @@ func NewCharacterDBRepository(database *gorm.DB) *CharacterDBRepository {
 }
 
 func (r *CharacterDBRepository) GetByName(name string) (*dto.CharacterInformation, error) {
-	return nil, nil
+	var characterModel model.Character
+	err := r.db.Where("name LIKE ?", "%"+name+"%").First(&characterModel).Error
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return nil, ErrNotFound
+	}
+	if err != nil {
+		return nil, err
+	}
+
+	characterDTO := &dto.CharacterInformation{
+		ID:          characterModel.ID,
+		ExternalID:  characterModel.ExternalID,
+		Name:        characterModel.Name,
+		Race:        characterModel.Race,
+		Ki:          characterModel.Ki,
+		Description: characterModel.Description,
+	}
+	return characterDTO, nil
 }
 
-func (r *CharacterDBRepository) Save(character dto.CharacterInformation) error {
+func (r *CharacterDBRepository) Save(character *dto.CharacterInformation) error {
+	characterModel := model.Character{
+		ExternalID:  character.ExternalID,
+		Name:        character.Name,
+		Race:        character.Race,
+		Ki:          character.Ki,
+		Description: character.Description,
+	}
+
+	err := r.db.Save(&characterModel).Error
+	if err != nil {
+		return err
+	}
+
+	character.ID = characterModel.ID
 	return nil
 }

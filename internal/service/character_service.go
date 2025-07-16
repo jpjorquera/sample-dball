@@ -3,6 +3,7 @@ package service
 import (
 	"dballz/internal/dto"
 	"dballz/internal/repository"
+	"errors"
 )
 
 type CharacterService struct {
@@ -19,7 +20,7 @@ func NewCharacterService(extGetter repository.CharacterGetter, store repository.
 
 func (s *CharacterService) GenerateCharacter(name string) (*dto.CharacterInformation, error) {
 	characterInformation, err := s.store.GetByName(name)
-	if err != nil {
+	if err != nil && !errors.Is(err, repository.ErrNotFound) {
 		return nil, err
 	}
 
@@ -31,5 +32,11 @@ func (s *CharacterService) GenerateCharacter(name string) (*dto.CharacterInforma
 	if err != nil {
 		return nil, err
 	}
+
+	err = s.store.Save(characterInformation)
+	if err != nil {
+		return nil, err
+	}
+
 	return characterInformation, nil
 }
