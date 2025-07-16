@@ -169,8 +169,29 @@ sequenceDiagram
 
 ---
 
+### 🧪 Running tests
+
+All tests can be run using the standard Go tooling. From the project root:
+
+```bash
+# Run all tests
+go test ./...
+
+# Run with verbose output
+go test -v ./...
+
+# Run tests with coverage
+go test ./... -cover
+```
+
+---
+
 ### ✅ Notes
 
 - The default SQLite database file is stored in the data/ folder.
 - When running in Docker, each build creates its own independent database instance.
 - The data/ folder is committed with a .gitkeep file to ensure the folder exists, but database files inside it are ignored by Git so each environment uses its own database instance.
+
+```
+
+```
